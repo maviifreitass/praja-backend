@@ -76,7 +76,7 @@ class CSRFProtection:
 
 def validate_request_origin(request: Request, allowed_origins: list = None) -> bool:
     if allowed_origins is None:
-        allowed_origins = ["http://localhost:4200", "http://localhost:8000"]
+        allowed_origins = ["http://localhost:4200", "http://localhost:8000", "https://praja-frontend.onrender.com"]
     
     origin = request.headers.get("origin")
     referer = request.headers.get("referer")
