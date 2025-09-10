@@ -69,6 +69,7 @@ def health_check():
         "environment": settings.ENV,
         "render_detected": bool(os.getenv("RENDER")),
         "cors_origins": settings.ALLOWED_ORIGINS,
+        "cors_origins_used": cors_origins,
         "port": os.getenv("PORT", "8000"),
         "host": settings.HOST
     }

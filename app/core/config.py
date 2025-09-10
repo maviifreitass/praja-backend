@@ -18,7 +18,8 @@ class Settings(BaseSettings):
         "http://localhost:4200", 
         "http://localhost:8000",
         "https://localhost:3000",
-        "https://localhost:4200"
+        "https://localhost:4200",
+        "https://praja-frontend.onrender.com"
     ]
     
     # Security settings
