@@ -16,39 +16,35 @@ Este projeto implementa um sistema de chamados corporativo que permite aos usuá
 
 ## 🏗️ Arquitetura
 
-O sistema segue uma arquitetura em camadas (layered architecture) com separação clara de responsabilidades:
+<details>
+<summary>Diagrama de Contexto</summary>
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   API Routes    │────│    Services     │────│    Database     │
-│   (FastAPI)     │    │   (Business)    │    │   (Supabase)    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-    ┌────▼────┐             ┌────▼────┐             ┌────▼────┐
-    │ Auth    │             │ Auth    │             │ Users   │
-    │ Tickets │             │ Ticket  │             │ Tickets │
-    │Categories│             │Category │             │Categories│
-    └─────────┘             └─────────┘             └─────────┘
-```
+![context](/docs/system-design/context.jpg)
+</details>
 
-**Camadas:**
-- **API Layer**: Endpoints REST com validação de entrada e autenticação
-- **Service Layer**: Lógica de negócio e regras de domínio
-- **Data Layer**: Acesso aos dados via Supabase PostgreSQL
+<details>
+<summary>Diagrama de Container</summary>
 
-**Tecnologias:**
-- **Backend**: FastAPI + Supabase + JWT
-- **Autenticação**: JWT Bearer tokens com bcrypt
-- **Banco de Dados**: PostgreSQL (via Supabase)
-- **Deploy**: Render (ou qualquer plataforma compatível)
+![container](/docs/system-design/container.jpg)
+</details>
 
-### 🎯 Principais Decisões Arquiteturais
+<details>
+<summary>Diagrama de Entidade-Relacionamento</summary>
 
-- **Arquitetura em Camadas**: Separação clara entre API, Service e Data layers
-- **Service Layer Pattern**: Lógica de negócio isolada em serviços especializados
-- **Dependency Injection**: Uso do sistema de dependências do FastAPI
-- **JWT Stateless**: Autenticação sem estado para escalabilidade
-- **Supabase BaaS**: Backend-as-a-Service para reduzir complexidade de infraestrutura
+![architecture](/docs/system-design/erd.jpg)
+</details>
+
+<details>
+<summary>Diagrama Sequencial de Login</summary>
+
+![architecture](/docs/system-design/sequence-login.png)
+</details>
+
+<details>
+<summary>Diagrama Sequencial de Tickets</summary>
+
+![architecture](/docs/system-design/sequence-tickets.png)
+</details>
 
 ## Estrutura do Projeto
 
@@ -141,13 +137,14 @@ O arquivo `env.example` contém todas as variáveis necessárias com documentaç
 - **JWT_EXPIRES_MIN**: Expiração do token em minutos (padrão: 60)
 - **ENV**: Ambiente da aplicação (padrão: dev)
 
-> 💡 **Dica**: Use `python -c "import secrets; print(secrets.token_urlsafe(32))"` para gerar uma JWT_SECRET segura.
 
 ## 🗄️ Banco de Dados
 
 ### Configuração do Supabase
 
 Execute este SQL no **SQL Editor** do Supabase para criar as tabelas, índices e dados iniciais:
+<details>
+<summary>Query</summary>
 
 ```sql
 -- Criar enum para roles
@@ -216,16 +213,15 @@ INSERT INTO users (name, email, password_hash, role) VALUES
     ('João Silva', 'joao@example.com', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6hsUNjqq4.', 'USER'),
     ('Maria Santos', 'maria@example.com', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj6hsUNjqq4.', 'USER');
 ```
-
+</details>
 ## 👥 Usuários de Teste
 
 O sistema vem com usuários pré-configurados para demonstração:
 
-| Tipo | Nome | Email | Senha | Permissões |
-|------|------|-------|-------|------------|
-| **Admin** | Administrador | `admin@example.com` | `admin123` | Todas as funcionalidades |
-| **User** | João Silva | `joao@example.com` | `admin123` | Gerenciar próprios tickets |
-| **User** | Maria Santos | `maria@example.com` | `admin123` | Gerenciar próprios tickets |
+| Tipo | Nome          | Email               | Senha       | Permissões |
+|------|---------------|---------------------|-------------|------------|
+| **Admin** | Administrador | `admin@example.com` | `Admin123!` | Todas as funcionalidades |
+| **User** | User Teste    | `user@example.com`  | `User123!`  | Gerenciar próprios tickets |
 
 ## 🎯 Fluxos de Demonstração
 
@@ -258,72 +254,10 @@ uvicorn app.main:app --reload --port 8000
 
 A API estará disponível em: http://localhost:8000
 
-## 📚 Documentação da API (Swagger)
-
-O **Swagger/OpenAPI** está totalmente configurado e integrado! 
-
-Com o servidor rodando, acesse:
-- **Swagger UI**: http://localhost:8000/docs (Interface interativa)
-- **ReDoc**: http://localhost:8000/redoc (Documentação limpa)
-
-### 🔐 Como usar o Swagger:
-1. Acesse http://localhost:8000/docs
-2. Faça login em `/auth/login` com admin@example.com / admin123
-3. Copie o token retornado
-4. Clique no botão **"Authorize" 🔒** no topo
-5. Cole o token (formato: `Bearer seu_token`)
-6. Agora pode testar todos os endpoints protegidos!
-
-### ✨ Funcionalidades do Swagger:
-- **Documentação rica** com exemplos
-- **Teste interativo** de endpoints
-- **Autenticação JWT** integrada
-- **Validação automática** de dados
-- **Schemas detalhados** de request/response
 
 ## 📡 API Endpoints
 
 > **📚 Documentação Completa**: Acesse http://localhost:8000/docs (Swagger) ou http://localhost:8000/redoc para documentação interativa completa.
-
-### 🔐 Autenticação (`/auth`)
-
-| Método | Endpoint | Descrição | Permissão | Exemplo Response |
-|--------|----------|-----------|-----------|------------------|
-| `GET` | `/auth/csrf-token` | Obter token CSRF | Público | `{"csrf_token": "abc123"}` |
-| `POST` | `/auth/register` | Registrar usuário | Público | `{"id": 1, "name": "João", "email": "joao@test.com", "role": "USER"}` |
-| `POST` | `/auth/login` | Fazer login | Público | `{"access_token": "jwt_token", "token_type": "bearer", "role": "USER"}` |
-| `GET` | `/auth/me` | Perfil do usuário | Autenticado | `{"id": 1, "name": "João", "email": "joao@test.com", "role": "USER"}` |
-| `GET` | `/auth/users` | Listar usuários | Admin | `[{"id": 1, "name": "João", "email": "joao@test.com", "role": "USER"}]` |
-| `GET` | `/auth/users/{id}` | Obter usuário | Admin | `{"id": 1, "name": "João", "email": "joao@test.com", "role": "USER"}` |
-| `PUT` | `/auth/users/{id}` | Atualizar usuário | Admin/Own | `{"id": 1, "name": "João Silva", "email": "joao@test.com", "role": "USER"}` |
-| `DELETE` | `/auth/users/{id}` | Deletar usuário | Admin | `{"message": "Usuário deletado"}` |
-
-### 🏷️ Categorias (`/categories`)
-
-| Método | Endpoint | Descrição | Permissão | Exemplo Response |
-|--------|----------|-----------|-----------|------------------|
-| `GET` | `/categories/` | Listar categorias | Autenticado | `[{"id": 1, "name": "Suporte Técnico", "color": "#ff5733"}]` |
-| `POST` | `/categories/` | Criar categoria | Admin | `{"id": 1, "name": "Nova Categoria", "color": "#ff5733"}` |
-| `GET` | `/categories/{id}` | Obter categoria | Admin | `{"id": 1, "name": "Suporte Técnico", "color": "#ff5733"}` |
-| `PUT` | `/categories/{id}` | Atualizar categoria | Admin | `{"id": 1, "name": "Suporte Atualizado", "color": "#ff5733"}` |
-| `DELETE` | `/categories/{id}` | Deletar categoria | Admin | `{"message": "Categoria deletada"}` |
-
-### 🎫 Tickets (`/tickets`)
-
-| Método | Endpoint | Descrição | Permissão | Exemplo Response |
-|--------|----------|-----------|-----------|------------------|
-| `GET` | `/tickets/` | Listar tickets | Autenticado | `[{"id": 1, "title": "Problema X", "status": "open", "priority": "HIGH"}]` |
-| `POST` | `/tickets/` | Criar ticket | Autenticado | `{"id": 1, "title": "Novo Ticket", "status": "open", "created_by": 1}` |
-| `GET` | `/tickets/{id}` | Obter ticket | Autenticado | `{"id": 1, "title": "Problema X", "description": "Detalhes...", "status": "open"}` |
-| `PUT` | `/tickets/{id}` | Atualizar ticket | Owner/Admin | `{"id": 1, "title": "Título Atualizado", "status": "open"}` |
-| `PATCH` | `/tickets/{id}/close` | Fechar ticket | Admin | `{"id": 1, "title": "Problema X", "status": "closed"}` |
-| `DELETE` | `/tickets/{id}` | Deletar ticket | Owner/Admin | `{"message": "Ticket deletado"}` |
-
-### 📊 Root
-
-| Método | Endpoint | Descrição | Permissão |
-|--------|----------|-----------|-----------|
-| `GET` | `/` | Informações da API | Público |
 
 ## Segurança
 
@@ -332,17 +266,7 @@ Com o servidor rodando, acesse:
 - Controle de acesso baseado em roles (USER/ADMIN)
 - Validação de dados com Pydantic
 
-## 🚀 Deploy no Render
-
-### Configuração do Serviço
-
-1. **Conecte o repositório** ao Render
-2. **Tipo de serviço**: Web Service
-3. **Runtime**: Python 3
-4. **Build Command**: `pip install -r requirements.txt`
-5. **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-
-### Variáveis de Ambiente Obrigatórias
+## Variáveis de Ambiente Obrigatórias
 
 Configure no painel do Render > Environment:
 
@@ -363,29 +287,6 @@ RENDER_SERVICE_NAME=nome-do-seu-servico
 CUSTOM_ORIGINS=https://seuapp.com,https://app.seudominio.com
 ```
 
-### Troubleshooting
-
-**❌ ERR_CONNECTION_REFUSED**
-1. Verifique se o serviço está rodando: `https://seu-servico.onrender.com/health`
-2. Confirme as variáveis de ambiente no painel do Render
-3. Verifique os logs do deploy para erros
-
-**❌ CORS Errors**
-1. Adicione sua origem frontend em `CUSTOM_ORIGINS`
-2. Ou configure `RENDER_SERVICE_NAME` para CORS automático
-
-**❌ 500 Internal Server Error**
-1. Verifique as credenciais do Supabase
-2. Confirme que `ENV=prod` está configurado
-3. Verifique se `JWT_SECRET` tem pelo menos 32 caracteres
-
-### URLs de Teste
-
-Após o deploy, teste:
-- **API Health**: `https://seu-servico.onrender.com/health`
-- **API Root**: `https://seu-servico.onrender.com/`
-- **Swagger**: `https://seu-servico.onrender.com/docs`
-- **ReDoc**: `https://seu-servico.onrender.com/redoc`
 
 ## 🛠️ Tecnologias
 
