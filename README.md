@@ -332,7 +332,62 @@ Com o servidor rodando, acesse:
 - Controle de acesso baseado em roles (USER/ADMIN)
 - Validação de dados com Pydantic
 
-## Tecnologias
+## 🚀 Deploy no Render
+
+### Configuração do Serviço
+
+1. **Conecte o repositório** ao Render
+2. **Tipo de serviço**: Web Service
+3. **Runtime**: Python 3
+4. **Build Command**: `pip install -r requirements.txt`
+5. **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+
+### Variáveis de Ambiente Obrigatórias
+
+Configure no painel do Render > Environment:
+
+```env
+# Supabase (obrigatório)
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_KEY=sua_chave_anon
+SUPABASE_SERVICE_ROLE_KEY=sua_chave_service_role
+
+# JWT (obrigatório)
+JWT_SECRET=sua_chave_secreta_32_caracteres
+
+# Ambiente (obrigatório)
+ENV=prod
+
+# Opcional - para CORS customizado
+RENDER_SERVICE_NAME=nome-do-seu-servico
+CUSTOM_ORIGINS=https://seuapp.com,https://app.seudominio.com
+```
+
+### Troubleshooting
+
+**❌ ERR_CONNECTION_REFUSED**
+1. Verifique se o serviço está rodando: `https://seu-servico.onrender.com/health`
+2. Confirme as variáveis de ambiente no painel do Render
+3. Verifique os logs do deploy para erros
+
+**❌ CORS Errors**
+1. Adicione sua origem frontend em `CUSTOM_ORIGINS`
+2. Ou configure `RENDER_SERVICE_NAME` para CORS automático
+
+**❌ 500 Internal Server Error**
+1. Verifique as credenciais do Supabase
+2. Confirme que `ENV=prod` está configurado
+3. Verifique se `JWT_SECRET` tem pelo menos 32 caracteres
+
+### URLs de Teste
+
+Após o deploy, teste:
+- **API Health**: `https://seu-servico.onrender.com/health`
+- **API Root**: `https://seu-servico.onrender.com/`
+- **Swagger**: `https://seu-servico.onrender.com/docs`
+- **ReDoc**: `https://seu-servico.onrender.com/redoc`
+
+## 🛠️ Tecnologias
 
 - **FastAPI**: Framework web moderno e rápido
 - **Supabase**: Backend-as-a-Service com PostgreSQL
