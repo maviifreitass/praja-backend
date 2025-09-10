@@ -99,6 +99,29 @@ class TicketService:
             updated_at=ticket.updated_at
         )
 
+    def get_ticket_by_id(self, ticket_id: int) -> TicketOut:
+        """Get ticket by ID without access control (for internal use like AI responses)"""
+        response = self.supabase.table("tickets").select("*").eq("id", ticket_id).execute()
+        
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Ticket not found")
+        
+        ticket_data = response.data[0]
+        ticket = Ticket.from_dict(ticket_data)
+        
+        return TicketOut(
+            id=ticket.id,
+            title=ticket.title,
+            description=ticket.description,
+            status=ticket.status,
+            priority=ticket.priority,
+            created_by=ticket.created_by,
+            category_id=ticket.category_id,
+            response=ticket.response,
+            created_at=ticket.created_at,
+            updated_at=ticket.updated_at
+        )
+
     def update_ticket(self, ticket_id: int, ticket_data: TicketUpdate, user: User) -> TicketOut:
         """Update an existing ticket with access control"""
         # Check if ticket exists

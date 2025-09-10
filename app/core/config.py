@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     JWT_EXPIRES_MIN: int = 60
     ENV: str = "dev"
     
+    # Groq AI configuration
+    GROQ_API_KEY: str
+    GROQ_MODEL: str = "llama3-8b-8192"
+    
     # CORS configuration
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",
@@ -32,6 +36,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        extra = "ignore"  # Ignore extra environment variables
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

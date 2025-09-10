@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from .api import auth, categories, tickets
+from .api import auth, categories, tickets, ai
 from .core.security_middleware import SecurityMiddleware
 from .core.config import settings
 import os
@@ -48,6 +48,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(tickets.router)
+app.include_router(ai.router)
 
 
 @app.get("/", tags=["Root"])

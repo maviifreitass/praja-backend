@@ -193,3 +193,17 @@ class TicketOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# AI Response Schemas
+class AIResponseRequest(BaseModel):
+    """Request schema for AI response generation"""
+    title: str = Field(min_length=1, max_length=200, description="Ticket title")
+    description: str = Field(min_length=1, max_length=2000, description="Ticket description")
+
+
+class AIResponseOut(BaseModel):
+    """Response schema for AI generated response"""
+    response: str = Field(description="AI generated response")
+    used_model: str = Field(description="AI model used for generation")
+    generated_at: datetime = Field(description="Timestamp when response was generated")

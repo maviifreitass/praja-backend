@@ -177,7 +177,7 @@ class AuthService:
                     update_data["password_hash"] = hash_password(value)
                 elif field == "role":
                     # Only admins can change roles
-                    if current_user.role != Role.ADMIN:
+                    if current_user.role != Role.ADMIN and user_data.role == Role.ADMIN :
                         raise HTTPException(status_code=403, detail="Only administrators can change user roles")
                     # Prevent changing the last admin to non-admin
                     if existing_user.role == Role.ADMIN and value != Role.ADMIN:

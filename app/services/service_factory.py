@@ -5,6 +5,7 @@ from ..database.connection import get_supabase
 from .auth_service import AuthService
 from .category_service import CategoryService
 from .ticket_service import TicketService
+from .groq_service import GroqService
 
 
 def get_auth_service(supabase: Client = Depends(get_supabase)) -> AuthService:
@@ -20,3 +21,8 @@ def get_category_service(supabase: Client = Depends(get_supabase)) -> CategorySe
 def get_ticket_service(supabase: Client = Depends(get_supabase)) -> TicketService:
     """Dependency to get TicketService instance"""
     return TicketService(supabase)
+
+
+def get_groq_service() -> GroqService:
+    """Dependency to get GroqService instance"""
+    return GroqService()
